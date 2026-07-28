@@ -1,14 +1,14 @@
 package com.github.abeatrizsc.financyx.infra.security;
 
+import com.github.abeatrizsc.financyx.exceptions.NotFoundException;
 import com.github.abeatrizsc.financyx.repositories.UserRepository;
 import com.github.abeatrizsc.financyx.domain.User;
-import com.github.abeatrizsc.financyx.exceptions.UserNotFoundException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,19 +17,17 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
-    @Autowired
-    TokenService tokenService;
-    @Autowired
-    UserRepository userRepository;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = tokenService.recoverToken(request);
-        var userId = tokenService.validateToken(token);
+        var userId = tokenService.validateToken(request);
 
         if(userId != null){
-            User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User"));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, List.of());
 

@@ -51,8 +51,6 @@ public class AuthService {
     }
 
     public String getAuthenticatedUserId(HttpServletRequest request) {
-        var token = tokenService.recoverToken(request);
-
-        return tokenService.validateToken(token);
+        return tokenService.validateToken(request);
     }
 }

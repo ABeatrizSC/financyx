@@ -1,6 +1,6 @@
 package com.github.abeatrizsc.financyx.infra.security;
 
-import com.github.abeatrizsc.financyx.exceptions.UserNotFoundException;
+import com.github.abeatrizsc.financyx.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +16,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = repository.findById(username).orElseThrow(UserNotFoundException::new);
+        User user = repository.findById(username).orElseThrow(() -> new NotFoundException("User"));
         return new org.springframework.security.core.userdetails.User(user.getId(), user.getPassword(), new ArrayList<>());
     }
 }

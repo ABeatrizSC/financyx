@@ -31,7 +31,9 @@ public class TokenService {
         return token;
     }
 
-    public String validateToken(String token){
+    public String validateToken(HttpServletRequest bearerToken){
+        String token = recoverToken(bearerToken);
+
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)

@@ -1,18 +1,15 @@
 package com.github.abeatrizsc.financyx.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.github.abeatrizsc.financyx.enums.CategoryTypeEnum;
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "categories")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,28 +17,32 @@ import lombok.*;
 @Builder
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Category {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false, name = "first_name")
-    private String firstName;
-
-    @Column(nullable = false, name = "last_name")
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
     @Column(nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
+    private String name;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Category> categories;
+    @Column
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryTypeEnum type;
+
+    @Column(nullable = false)
+    private String color;
+
+    @Column(name = "monthly_limit", precision = 19, scale = 2)
+    private BigDecimal monthlyLimit = BigDecimal.ZERO;
 
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
@@ -61,3 +62,4 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 }
+

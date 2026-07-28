@@ -5,7 +5,7 @@ import com.github.abeatrizsc.financyx.dto.AccountDetailsDto;
 import com.github.abeatrizsc.financyx.dto.DeleteAccountDto;
 import com.github.abeatrizsc.financyx.dto.UpdateAccountDto;
 import com.github.abeatrizsc.financyx.exceptions.AuthErrorException;
-import com.github.abeatrizsc.financyx.exceptions.UserNotFoundException;
+import com.github.abeatrizsc.financyx.exceptions.NotFoundException;
 import com.github.abeatrizsc.financyx.repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User findUserById(String id) {
-        return repository.findById(id).orElseThrow(UserNotFoundException::new);
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("User"));
     }
 
     public Optional<User> findUserByEmail(String email) {

@@ -123,13 +123,13 @@ class AuthServiceTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         when(tokenService.recoverToken(request)).thenReturn("validToken");
-        when(tokenService.validateToken("validToken")).thenReturn("1");
+        when(tokenService.validateToken(any(HttpServletRequest.class))).thenReturn("1");
 
         String userId = authService.getAuthenticatedUserId(request);
 
         assertThat(userId).isEqualTo("1");
         verify(tokenService, times(1)).recoverToken(request);
-        verify(tokenService, times(1)).validateToken("validToken");
+        verify(tokenService, times(1)).validateToken(any(HttpServletRequest.class));
     }
 
     @Test

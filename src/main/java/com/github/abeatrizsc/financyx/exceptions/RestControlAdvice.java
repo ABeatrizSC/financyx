@@ -24,9 +24,9 @@ public class RestControlAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, errors.get(0)));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<RestErrorMessage> handleUserNotFoundException(UserNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RestErrorMessage(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, e.getMessage()));
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<RestErrorMessage> handleNotFoundException(NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestErrorMessage(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
     @ExceptionHandler(JWTCreationException.class)
@@ -45,7 +45,12 @@ public class RestControlAdvice {
     }
 
     @ExceptionHandler(AuthErrorException.class)
-    public ResponseEntity<RestErrorMessage> handleAuthErrorException(EmailAlreadyInUseException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getMessage()));
+    public ResponseEntity<RestErrorMessage> handleAuthErrorException(AuthErrorException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<RestErrorMessage> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RestErrorMessage(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 }

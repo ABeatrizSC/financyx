@@ -22,16 +22,17 @@ public class TokenService {
     public String generateToken(User user) throws JWTCreationException {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
-        String token = JWT.create()
+        return JWT.create()
                 .withIssuer("auth-ms")
                 .withSubject(user.getId())
                 .withClaim("name", user.getFirstName())
                 .withExpiresAt(this.generateExpirationDate())
                 .sign(algorithm);
-        return token;
     }
 
-    public String validateToken(String token){
+    public String validateToken(HttpServletRequest bearerToken){
+        String token = recoverToken(bearerToken);
+
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)

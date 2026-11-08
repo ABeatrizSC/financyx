@@ -4,7 +4,7 @@ import com.github.abeatrizsc.financyx.domain.User;
 import com.github.abeatrizsc.financyx.dto.DeleteAccountDto;
 import com.github.abeatrizsc.financyx.dto.UpdateAccountDto;
 import com.github.abeatrizsc.financyx.exceptions.AuthErrorException;
-import com.github.abeatrizsc.financyx.exceptions.UserNotFoundException;
+import com.github.abeatrizsc.financyx.exceptions.NotFoundException;
 import com.github.abeatrizsc.financyx.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,13 +46,13 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw UserNotFoundException when user does not exist")
-    void shouldNotFindUserByIdAndReturnUserNotFoundException() {
+    @DisplayName("Should throw NotFoundException when user does not exist")
+    void shouldNotFindUserByIdAndReturnNotFoundException() {
         String userId = "1";
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        UserNotFoundException exception = assertThrows(
-                UserNotFoundException.class,
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
                 () -> userService.findUserById(userId)
         );
 
@@ -104,14 +104,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw UserNotFoundException when user is not found on update")
+    @DisplayName("Should throw NotFoundException when user is not found on update")
     void shouldNotUpdateUserWhenUserNotFound() {
         UpdateAccountDto updatedUser = new UpdateAccountDto("New John", "Doe Updated", "john.doe.updated@email.com", "1234567", "new1234");
 
         when(userRepository.findById("invalidId")).thenReturn(Optional.empty());
 
-        UserNotFoundException exception = assertThrows(
-                UserNotFoundException.class,
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
                 () -> userService.updateAccount("invalidId", updatedUser)
         );
 

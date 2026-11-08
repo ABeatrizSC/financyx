@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(HttpServletRequest request, @PathVariable String id) {
-        String requestUser = tokenService.validateToken(tokenService.recoverToken(request));
+        String requestUser = tokenService.validateToken(request);
 
         if (Objects.equals(id, requestUser)) {
             return ResponseEntity.ok(userService.findUserById(id));
@@ -36,14 +36,14 @@ public class UserController {
 
     @GetMapping("/details")
     public ResponseEntity<AccountDetailsDto> getUserAccountDetails(HttpServletRequest request) {
-        String userId = tokenService.validateToken(tokenService.recoverToken(request));
+        String userId = tokenService.validateToken(request);
 
         return ResponseEntity.ok(userService.getAccountDetails(userId));
     }
 
     @PutMapping
     public ResponseEntity<String> updateUserAccount(HttpServletRequest request, @Valid @RequestBody UpdateAccountDto updateAccountDto) {
-        String userId = tokenService.validateToken(tokenService.recoverToken(request));
+        String userId = tokenService.validateToken(request);
 
         userService.updateAccount(userId, updateAccountDto);
 
@@ -52,7 +52,7 @@ public class UserController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteUserAccount(HttpServletRequest request, @Valid @RequestBody DeleteAccountDto dto) {
-        String userId = tokenService.validateToken(tokenService.recoverToken(request));
+        String userId = tokenService.validateToken(request);
 
         userService.deleteAccount(userId, dto);
 

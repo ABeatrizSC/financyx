@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.abeatrizsc.financyx.dto.LoginRequestDto;
 import com.github.abeatrizsc.financyx.dto.LoginResponseDto;
@@ -23,6 +24,7 @@ public class AuthService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final CategoryService categoryService;
 
     public LoginResponseDto login(LoginRequestDto body){
         User user = userService.findUserByEmail(body.getEmail()).orElseThrow(AuthErrorException::new);
@@ -34,6 +36,7 @@ public class AuthService {
         return new LoginResponseDto(tokenService.generateToken(user));
     }
 
+    @Transactional
     public void register(RegisterRequestDto body) {
         Optional<User> user = userService.findUserByEmail(body.getEmail());
 
@@ -44,6 +47,7 @@ public class AuthService {
             newUser.setFirstName(body.getFirstName());
             newUser.setLastName(body.getLastName());
             userService.create(newUser);
+            categoryService.createInitialCategories(newUser);
         } else {
             throw new EmailAlreadyInUseException();
         }
@@ -51,8 +55,6 @@ public class AuthService {
     }
 
     public String getAuthenticatedUserId(HttpServletRequest request) {
-        var token = tokenService.recoverToken(request);
-
-        return tokenService.validateToken(token);
+        return tokenService.validateToken(request);
     }
 }
